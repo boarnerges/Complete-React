@@ -5,25 +5,35 @@ import Card from "../UI/Card";
 import ExpensesFilter from "./ExpensesFilter";
 
 const Expenses = (props) => {
-  const [filterdYear, setFilteredYear] = useState("2022");
+  const [filteredYear, setFilteredYear] = useState("2022");
 
   const dateEventHandler = (datePicked) => {
     setFilteredYear(datePicked);
-    console.log(datePicked);
   };
+
+  const filteredExpenses = props.items.filter((expense) => {
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
+
+  let expensesContent = <p>No expenses found.</p>;
+
+  if (filteredExpenses.length > 0) {
+    expensesContent = filteredExpenses.map((expense) => (
+      <ExpenseItem
+        Key={expense.id}
+        title={expense.title}
+        amount={expense.amount}
+        date={expense.date}
+      />
+    ));
+  }
   return (
     <Card className="expenses">
       <ExpensesFilter
-        selected={filterdYear}
+        selected={filteredYear}
         onFilterHandler={dateEventHandler}
       />
-      {props.items.map((expense) => (
-        <ExpenseItem
-          title={expense.title}
-          amount={expense.amount}
-          date={expense.date}
-        />
-      ))}
+      {expensesContent}
     </Card>
   );
 };
